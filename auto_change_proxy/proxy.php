@@ -100,7 +100,21 @@ foreach ($list["vmess"] as $vmess) {
     $configArray['outbounds'][0]['settings']['vnext'][0]['port']                = $vmess["port"];
     $configArray['outbounds'][0]['settings']['vnext'][0]['users'][0]['id']      = $vmess["uuid"];
     $configArray['outbounds'][0]['settings']['vnext'][0]['users'][0]['alterId'] = $vmess["alterId"];
-    $configArray['outbounds'][1]['settings']                                    = (object)$configArray['outbounds'][1]['settings'];
+    $configArray['outbounds'][2]['settings']                                    = (object)$configArray['outbounds'][2]['settings'];
+    $last                                                                       = json_encode($configArray, JSON_THROW_ON_ERROR);
+    file_put_contents($configPath, $last);
+    exec("docker restart v2ray");
+    sleep(2);
+    $pingAddress() && exit("change successful");
+}
+
+foreach ($list["ss"] as $ss) {
+    $configArray['outbounds'][1]['settings']['servers'][0]['address']       = $ss["server"];
+    $configArray['outbounds'][1]['settings']['servers'][0]['port']          = $ss["port"];
+    $configArray['outbounds'][1]['settings']['servers'][0]['method']        = $ss["cipher"];
+    $configArray['outbounds'][1]['settings']['servers'][0]['ota']           = true;
+    $configArray['outbounds'][1]['settings']['servers'][0]['password']      = $ss["password"];
+    $configArray['outbounds'][2]['settings']                                    = (object)$configArray['outbounds'][2]['settings'];
     $last                                                                       = json_encode($configArray, JSON_THROW_ON_ERROR);
     file_put_contents($configPath, $last);
     exec("docker restart v2ray");
