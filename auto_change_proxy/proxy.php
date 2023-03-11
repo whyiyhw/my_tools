@@ -43,7 +43,9 @@ try {
 $data = file_get_contents($url);
 
 $arr = explode(PHP_EOL, base64_decode($data));
-
+if (count($arr) === 1){
+    $arr = explode("\n", base64_decode($data));
+}
 if (count($arr) === 0) {
     exit("没有获取到数据");
 }
@@ -54,7 +56,7 @@ foreach ($arr as $value) {
 
     $value = trim($value);
 
-    if (strpos($value, "ss://") === 0) {
+    if (str_starts_with($value, "ss://")) {
 
         [$needDecodeData, $name] = explode("#", substr($value, 5));
 
@@ -71,9 +73,9 @@ foreach ($arr as $value) {
         continue;
     }
 
-    if (strpos($value, "vmess://") === 0) {
+    if (str_starts_with($value, "vmess://")) {
 
-        $tmp = json_decode(base64_decode(substr($value, 8)), true);
+        $tmp = json_decode(base64_decode(substr($value, 8)), true, 512, JSON_THROW_ON_ERROR);
 
         $list["vmess"][] = [
             "name"             => $tmp["ps"],
