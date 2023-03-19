@@ -60,15 +60,24 @@ foreach ($arr as $value) {
 
         [$needDecodeData, $name] = explode("#", substr($value, 5));
 
-        $tmp = explode(":", base64_decode($needDecodeData));
+        // 协议兼容
+        if (strpos($needDecodeData, "@")) {
+            [$needDecodeData, $serveWhole] = explode("@", $needDecodeData);
+            [$cipher, $password] = explode(":", base64_decode($needDecodeData));
+            [$server, $port] = explode(":", base64_decode($serveWhole));
+        } else {
+            $tmp = explode(":", base64_decode($needDecodeData));
+            [$cipher, , $port] = $tmp;
+            [$password, $server] = explode("@", $tmp[1]);
+        }
 
         $list["ss"][] = [
             "name"     => $name,
             "type"     => "ss",
-            "server"   => explode("@", $tmp[1])[1],
-            "port"     => (int)$tmp[2],
-            "password" => explode("@", $tmp[1])[0],
-            "cipher"   => $tmp[0],
+            "server"   => $server,
+            "port"     => (int)$port,
+            "password" => $password,
+            "cipher"   => $cipher,
         ];
         continue;
     }
