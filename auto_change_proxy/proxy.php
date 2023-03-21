@@ -1,16 +1,16 @@
 <?php
 # 读取指定文件的json
-$configPath = "xxxxxxxxxxxx";
-$url        = "xxxxxxxxxxxxxxxxxxxx";
+$configPath = "/path/to/config.json";
+$url        = "https://xxxxxxxxxxxxxxxxxxxxxxxx";
 
 $pingAddress = function () {
     $status = -1;
     if (strcasecmp(PHP_OS, 'WINNT') === 0) {
         // Windows 服务器下
-        $pingResult = exec("curl -x socks5://127.0.0.1:1080 https://api.openai.com/v1/completions -v", $outcome, $status);
+        $pingResult = exec("curl --connect-timeout 5 -m 10 -x socks5://127.0.0.1:1080 https://api.openai.com/v1/completions -v", $outcome, $status);
     } elseif (strcasecmp(PHP_OS, 'Linux') === 0) {
         // Linux 服务器下
-        $pingResult = exec("curl -x socks5://127.0.0.1:1080 https://api.openai.com/v1/completions -v", $outcome, $status);
+        $pingResult = exec("curl --connect-timeout 5 -m 10 -x socks5://127.0.0.1:1080 https://api.openai.com/v1/completions -v", $outcome, $status);
         echo $pingResult . PHP_EOL;
     }
     if (0 === $status) {
