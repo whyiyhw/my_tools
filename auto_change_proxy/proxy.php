@@ -64,7 +64,7 @@ foreach ($arr as $value) {
         if (strpos($needDecodeData, "@")) {
             [$needDecodeData, $serveWhole] = explode("@", $needDecodeData);
             [$cipher, $password] = explode(":", base64_decode($needDecodeData));
-            [$server, $port] = explode(":", base64_decode($serveWhole));
+            [$server, $port] = explode(":", $serveWhole);
         } else {
             $tmp = explode(":", base64_decode($needDecodeData));
             [$cipher, , $port] = $tmp;
