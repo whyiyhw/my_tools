@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+SC:wght@400;500;700;900&family=JetBrains+Mono:wght@400&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+  background: #fafaf8;
+  width: 2400px;
+  height: 1600px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* subtle dot grid background */
+body::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, #c0c0b8 0.6px, transparent 0.6px);
+  background-size: 28px 28px;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* SVG connector lines */
+svg.conn {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+svg.conn path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-width: 2.5;
+  opacity: 0.45;
+}
+
+/* CENTER circle */
+.center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: #1a1a2e;
+  color: #fafaf8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 0 0 4px #fafaf8, 0 0 0 8px #1a1a2e;
+}
+.center-title { font-size: 24px; font-weight: 900; line-height: 1.35; }
+.center-sub { font-size: 13px; opacity: 0.55; margin-top: 6px; }
+
+/* Branch containers — JS will position these */
+.branch {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  visibility: hidden; /* hidden until JS positions */
+}
+.branch-right { align-items: flex-start; }
+.branch-left { align-items: flex-end; }
+
+/* LEVEL 1 — colored capsule */
+.l1 {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 24px;
+  border-radius: 100px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fafaf8;
+  white-space: nowrap;
+}
+
+/* LEVEL 2 — white cards */
+.items { display: flex; flex-direction: column; gap: 6px; }
+.item {
+  background: #fff;
+  border: 1.5px solid #e5e5e0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #444;
+  width: 360px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.item-title { font-weight: 700; font-size: 14px; margin-bottom: 3px; color: #222; }
+.item-data {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: #888;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed #e5e5e0;
+}
+.item-data strong { color: #333; }
+
+/*
+  === COLOR THEMES ===
+  Each branch gets a .t-{name} class.
+  To add a new theme, copy the pattern below.
+  Available: amber, green, blue, rose, slate, teal, purple, orange, crimson, indigo
+*/
+.t-amber .l1 { background: #b8721a; }
+.t-amber .item { border-color: #e8d5ab; }
+.t-amber .item-title { color: #7a4c10; }
+
+.t-green .l1 { background: #1a7a4a; }
+.t-green .item { border-color: #a8d8be; }
+.t-green .item-title { color: #125a36; }
+
+.t-blue .l1 { background: #1a4a7a; }
+.t-blue .item { border-color: #a8c4e0; }
+.t-blue .item-title { color: #0e3a5e; }
+
+.t-rose .l1 { background: #9a2a4a; }
+.t-rose .item { border-color: #e0b0c0; }
+.t-rose .item-title { color: #6a1a30; }
+
+.t-slate .l1 { background: #3a3a4a; }
+.t-slate .item { border-color: #c8c8d0; }
+.t-slate .item-title { color: #2a2a38; }
+
+.t-teal .l1 { background: #1a6a6a; }
+.t-teal .item { border-color: #a0d4d4; }
+.t-teal .item-title { color: #104a4a; }
+
+.t-purple .l1 { background: #5b3a8c; }
+.t-purple .item { border-color: #cfc0e0; }
+.t-purple .item-title { color: #3a2060; }
+
+.t-orange .l1 { background: #c45a1a; }
+.t-orange .item { border-color: #e8c8a8; }
+.t-orange .item-title { color: #7a3a0e; }
+
+.t-crimson .l1 { background: #a81a2a; }
+.t-crimson .item { border-color: #e0b0b8; }
+.t-crimson .item-title { color: #6a0e1a; }
+
+.t-indigo .l1 { background: #2a3a8a; }
+.t-indigo .item { border-color: #b0b8e0; }
+.t-indigo .item-title { color: #1a2060; }
+</style>
+</head>
+<body>
+
+<svg class="conn" id="svg"></svg>
+
+<!-- ==================== CENTER ==================== -->
+<div class="center" id="center">
+  <div class="center-title">{{CENTER_TITLE}}</div>
+  <div class="center-sub">{{CENTER_SUBTITLE}}</div>
+</div>
+
+<!-- ==================== RIGHT BRANCHES ==================== -->
+<!-- Each branch: id="r1","r2","r3"... positioned off-screen, JS will fix -->
+
+<div class="branch branch-right t-amber" id="r1" style="left:-9999px; top:0;">
+  <div class="l1">{{R1_L1}}</div>
+  <div class="items">
+    <div class="item">
+      <div class="item-title">{{R1_CARD1_TITLE}}</div>
+      {{R1_CARD1_CONTENT}}
+    </div>
+    <!-- more cards... -->
+  </div>
+</div>
+
+<div class="branch branch-right t-green" id="r2" style="left:-9999px; top:0;">
+  <div class="l1">{{R2_L1}}</div>
+  <div class="items">
+    <div class="item">
+      <div class="item-title">{{R2_CARD1_TITLE}}</div>
+      {{R2_CARD1_CONTENT}}
+    </div>
+  </div>
+</div>
+
+<div class="branch branch-right t-blue" id="r3" style="left:-9999px; top:0;">
+  <div class="l1">{{R3_L1}}</div>
+  <div class="items">
+    <div class="item">
+      <div class="item-title">{{R3_CARD1_TITLE}}</div>
+      {{R3_CARD1_CONTENT}}
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LEFT BRANCHES ==================== -->
+
+<div class="branch branch-left t-rose" id="l1" style="left:-9999px; top:0;">
+  <div class="l1">{{L1_L1}}</div>
+  <div class="items" style="align-items:flex-end;">
+    <div class="item" style="text-align:right;">
+      {{L1_CARD1_CONTENT}}
+    </div>
+  </div>
+</div>
+
+<div class="branch branch-left t-slate" id="l2" style="left:-9999px; top:0;">
+  <div class="l1">{{L2_L1}}</div>
+  <div class="items" style="align-items:flex-end;">
+    <div class="item" style="text-align:right;">
+      {{L2_CARD1_CONTENT}}
+    </div>
+  </div>
+</div>
+
+<div class="branch branch-left t-teal" id="l3" style="left:-9999px; top:0;">
+  <div class="l1">{{L3_L1}}</div>
+  <div class="items" style="align-items:flex-end;">
+    <div class="item" style="text-align:right;">
+      {{L3_CARD1_CONTENT}}
+    </div>
+  </div>
+</div>
+
+<!-- ==================== LAYOUT ALGORITHM ==================== -->
+<script>
+/**
+ * Mindmap Layout Engine
+ * - Measures each branch's actual rendered height
+ * - Distributes branches evenly around vertical center with collision gap
+ * - Draws bezier curves from center to each L1 capsule
+ *
+ * CONFIG:
+ *   - rightIds / leftIds: branch element IDs in order
+ *   - rightColors / leftColors: stroke colors matching L1 themes
+ *   - GAP: minimum pixels between branches
+ *   - CENTER_OFFSET: horizontal distance from center to branch start
+ *
+ * To add more branches: just add more IDs and colors.
+ * To change content: edit the HTML cards above.
+ * To change colors: edit CSS .t-{name} theme or swap class on branch element.
+ */
+const W = 2400, H = 1600;
+const CX = W / 2, CY = H / 2;
+const GAP = 30;
+const CENTER_OFFSET = 140;
+
+const rightIds = ['r1', 'r2', 'r3'];
+const rightColors = ['#b8721a', '#1a7a4a', '#1a4a7a'];
+const leftIds = ['l1', 'l2', 'l3'];
+const leftColors = ['#9a2a4a', '#3a3a4a', '#1a6a6a'];
+
+function layoutSide(ids, colors, side) {
+  const svg = document.getElementById('svg');
+  const branches = ids.map(id => {
+    const el = document.getElementById(id);
+    return { el, h: el.offsetHeight };
+  });
+
+  const totalH = branches.reduce((s, b) => s + b.h, 0) + GAP * (branches.length - 1);
+  let y = Math.max(40, CY - totalH / 2);
+
+  branches.forEach((b, i) => {
+    b.el.style.top = y + 'px';
+    b.el.style.visibility = 'visible';
+
+    if (side === 'right') {
+      b.el.style.left = (CX + CENTER_OFFSET) + 'px';
+      b.el.style.right = '';
+    } else {
+      b.el.style.left = '';
+      b.el.style.right = (W - CX + CENTER_OFFSET) + 'px';
+    }
+
+    const l1 = b.el.querySelector('.l1');
+    const l1Rect = l1.getBoundingClientRect();
+    const ey = l1Rect.top + l1Rect.height / 2;
+    const ex = side === 'right' ? l1Rect.left : l1Rect.right;
+
+    const dx = (ex - CX) * 0.45;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', `M${CX},${CY} C${CX + dx},${CY} ${ex - dx},${ey} ${ex},${ey}`);
+    path.setAttribute('stroke', colors[i]);
+    svg.appendChild(path);
+
+    y += b.h + GAP;
+  });
+}
+
+layoutSide(rightIds, rightColors, 'right');
+layoutSide(leftIds, leftColors, 'left');
+
+document.title = 'READY';
+</script>
+
+</body>
+</html>
