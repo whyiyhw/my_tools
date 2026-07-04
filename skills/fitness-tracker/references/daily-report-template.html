@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+SC:wght@300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: #0e0e0e;
+  color: #f0ede6;
+  width: 1200px;
+  height: 1600px;
+  overflow: hidden;
+  position: relative;
+}
+
+body::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+}
+
+.topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 8px;
+  background: #c94420;
+}
+.date-block {
+  position: absolute;
+  top: 48px; right: 48px;
+  text-align: right;
+}
+.date-block .day {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 72px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.date-block .month {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #666;
+}
+
+.hero {
+  position: absolute;
+  top: 60px; left: 48px;
+}
+.hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 4px;
+}
+.hero-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 160px;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+.hero-unit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  color: #444;
+  margin-left: 8px;
+  vertical-align: bottom;
+}
+.hero-target {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: #555;
+  margin-top: 4px;
+}
+.hero-target span { color: #c94420; font-weight: 700; }
+
+.macros {
+  position: absolute;
+  top: 340px; left: 48px; right: 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+}
+.macro {
+  background: #1a1a1a;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.macro-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  opacity: 0.15;
+}
+.macro-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 8px;
+}
+.macro-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px;
+  line-height: 1;
+}
+.macro-target {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #444;
+  margin-top: 4px;
+}
+.macro-pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+.protein .macro-val, .protein .macro-bar, .protein .macro-pct { color: #2dd4a0; }
+.fat .macro-val, .fat .macro-bar, .fat .macro-pct { color: #e8a838; }
+.carbs .macro-val, .carbs .macro-bar, .carbs .macro-pct { color: #4ea4f6; }
+
+.training {
+  position: absolute;
+  top: 560px; left: 48px; right: 48px;
+}
+.section-label {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  color: #c94420;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #333;
+}
+.exercise-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.ex-item {
+  background: #1a1a1a;
+  padding: 20px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ex-name { font-weight: 700; font-size: 16px; color: #e0ddd6; }
+.ex-detail {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: #666;
+}
+.ex-detail .heavy { color: #c94420; font-weight: 700; }
+
+.meals {
+  position: absolute;
+  top: 800px; left: 48px; right: 48px; bottom: 48px;
+  overflow: hidden;
+}
+.meal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.meal-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 80px 80px 80px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+.meal-row.header {
+  border-bottom: 2px solid #333;
+  padding-bottom: 12px;
+  margin-bottom: 4px;
+}
+.meal-row.header span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #555;
+}
+.meal-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #444;
+}
+.meal-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #d0cdc6;
+}
+.meal-weight {
+  font-size: 11px;
+  color: #555;
+  margin-left: 6px;
+}
+.meal-p, .meal-f, .meal-c {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.meal-p { color: #2dd4a0; }
+.meal-f { color: #e8a838; }
+.meal-c { color: #4ea4f6; }
+.meal-row.total {
+  border-top: 2px solid #333;
+  margin-top: 4px;
+  padding-top: 16px;
+}
+.meal-row.total .meal-name { font-weight: 700; color: #f0ede6; font-size: 15px; }
+.meal-row.total .meal-p,
+.meal-row.total .meal-f,
+.meal-row.total .meal-c { font-weight: 700; font-size: 14px; }
+</style>
+</head>
+<body>
+
+<!-- 只需替换 {{}} 占位符内容 -->
+
+<div class="topbar"></div>
+
+<div class="hero">
+  <div class="hero-label">总热量</div>
+  <div class="hero-num">{{TOTAL_CAL}}<span class="hero-unit">kcal</span></div>
+  <div class="hero-target">目标 <span>{{TARGET_CAL}}</span> · 完成 {{PCT}}%</div>
+</div>
+
+<div class="date-block">
+  <div class="day">{{DAY}}</div>
+  <div class="month">{{YEAR}} · {{MONTH}} · {{WEEKDAY}}</div>
+</div>
+
+<div class="macros">
+  <div class="macro protein">
+    <div class="macro-bar" style="height:{{PROTEIN_PCT}}%"></div>
+    <div class="macro-label">蛋白质 Protein</div>
+    <div class="macro-val">{{PROTEIN}}</div>
+    <div class="macro-target">/ {{PROTEIN_TARGET}}g</div>
+    <div class="macro-pct">{{PROTEIN_PCT}}%</div>
+  </div>
+  <div class="macro fat">
+    <div class="macro-bar" style="height:{{FAT_PCT}}%"></div>
+    <div class="macro-label">脂肪 Fat</div>
+    <div class="macro-val">{{FAT}}</div>
+    <div class="macro-target">/ {{FAT_TARGET}}g</div>
+    <div class="macro-pct">{{FAT_PCT}}%</div>
+  </div>
+  <div class="macro carbs">
+    <div class="macro-bar" style="height:{{CARBS_PCT}}%"></div>
+    <div class="macro-label">碳水 Carbs</div>
+    <div class="macro-val">{{CARBS}}</div>
+    <div class="macro-target">/ {{CARBS_TARGET}}g</div>
+    <div class="macro-pct">{{CARBS_PCT}}%</div>
+  </div>
+</div>
+
+<!-- 训练：无训练日删除此块 -->
+<div class="training">
+  <div class="section-label">训练 {{TRAINING_TYPE}}</div>
+  <div class="exercise-grid">
+    {{EXERCISES}}
+    <!-- 每个: <div class="ex-item"><span class="ex-name">动作名</span><span class="ex-detail">4组</span></div> -->
+    <!-- 有重量: <span class="ex-detail"><span class="heavy">100kg</span> · 4组</span> -->
+  </div>
+</div>
+
+<div class="meals">
+  <div class="section-label">饮食 INTAKE</div>
+  <div class="meal-list">
+    <div class="meal-row header">
+      <span>时间</span>
+      <span>食物</span>
+      <span>蛋白</span>
+      <span>脂肪</span>
+      <span>碳水</span>
+    </div>
+    {{MEAL_ROWS}}
+    <!-- 每餐:
+    <div class="meal-row">
+      <span class="meal-time">HH:MM</span>
+      <span class="meal-name">食物名 <span class="meal-weight">XXXg</span></span>
+      <span class="meal-p">XX.X</span>
+      <span class="meal-f">XX.X</span>
+      <span class="meal-c">XX.X</span>
+    </div>
+    -->
+    <div class="meal-row total">
+      <span class="meal-time"></span>
+      <span class="meal-name">合计</span>
+      <span class="meal-p">{{PROTEIN}}</span>
+      <span class="meal-f">{{FAT}}</span>
+      <span class="meal-c">{{CARBS}}</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
