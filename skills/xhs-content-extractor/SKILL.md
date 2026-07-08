@@ -41,7 +41,7 @@ obsidian create path="inbox/{title}.md" content="$(cat {output_dir}/extracted.md
 
 | 工具 | 用途 |
 |---|---|
-| `scripts/xhs-fetch.py` | 笔记元信息 + 图片下载 + 评论抓取（workspace/scripts/） |
+| `scripts/xhs-fetch.py` | 笔记元信息 + 图片下载 + 评论抓取 |
 | `opencli xiaohongshu download` | 视频下载 |
 | `ffmpeg` | 音频提取 + 分段 |
 | `faster-whisper` (bili venv) | 视频音频转录 |
