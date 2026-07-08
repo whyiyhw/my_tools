@@ -7,7 +7,7 @@ URL="$1"
 OUTPUT_DIR="${2:-/tmp/xhs-extract}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 VENV_PY="$HOME/.openclaw/workspace/skills/bilibili-all-in-one/.venv/bin/python"
-FETCH_PY="$HOME/.openclaw/workspace/scripts/xhs-fetch.py"
+FETCH_PY="$SCRIPT_DIR/xhs-fetch.py"
 
 mkdir -p "$OUTPUT_DIR"
 
